@@ -1,4 +1,4 @@
-import { Search, Map, DollarSign, MapPin, MessageSquare, User } from 'lucide-react';
+import { Search, Map, DollarSign, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
@@ -41,7 +41,7 @@ export default function LandingPage({ onNavigate }: LandingPageProps) {
       {/* Quick Access Buttons */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('routes')}>
               <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                 <div className="w-16 h-16 rounded-full bg-[#2E7D32] flex items-center justify-center mb-4">
@@ -69,26 +69,6 @@ export default function LandingPage({ onNavigate }: LandingPageProps) {
                 </div>
                 <h3 className="mb-2">Find Jeepney Stops</h3>
                 <p className="text-gray-600 text-sm">Locate stops and landmarks</p>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('drivers')}>
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#F9A825] flex items-center justify-center mb-4">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="mb-2">Our Drivers</h3>
-                <p className="text-gray-600 text-sm">Meet our professional drivers</p>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('feedback')}>
-              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#2E7D32] flex items-center justify-center mb-4">
-                  <MessageSquare className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="mb-2">Feedback</h3>
-                <p className="text-gray-600 text-sm">Share your experience with us</p>
               </CardContent>
             </Card>
           </div>
@@ -184,7 +164,6 @@ export default function LandingPage({ onNavigate }: LandingPageProps) {
                 <li><button onClick={() => onNavigate('routes')} className="hover:text-white transition-colors">Routes</button></li>
                 <li><button onClick={() => onNavigate('fares')} className="hover:text-white transition-colors">Fares</button></li>
                 <li><button onClick={() => onNavigate('stops')} className="hover:text-white transition-colors">Stops</button></li>
-                <li><button onClick={() => onNavigate('feedback')} className="hover:text-white transition-colors">Feedback</button></li>
               </ul>
             </div>
             <div>

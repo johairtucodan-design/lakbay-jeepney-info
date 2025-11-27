@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
 import Navbar from './Navbar';
+import UserSidebar from './UserSidebar';
 import InteractiveMap from './InteractiveMap';
-import { Home, Map, DollarSign, MapPin, MessageSquare, Menu, X, User as UserIcon } from 'lucide-react';
+import { Map, DollarSign, MapPin, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
 interface UserDashboardProps {
@@ -18,7 +19,6 @@ interface UserDashboardProps {
 }
 
 export default function UserDashboard({ user, onNavigate, onLogout }: UserDashboardProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
@@ -45,10 +45,10 @@ export default function UserDashboard({ user, onNavigate, onLogout }: UserDashbo
   };
 
   const safetyTips = [
-    { icon: '😷', title: 'Wear Face Mask', description: 'Always wear your face mask properly' },
     { icon: '💰', title: 'Exact Fare', description: 'Prepare exact fare when possible' },
-    { icon: '👥', title: 'Social Distance', description: 'Maintain safe distance from others' },
+    { icon: '🎒', title: 'Secure Belongings', description: 'Keep your bags close and secure' },
     { icon: '🚪', title: 'Wait Safely', description: 'Stand away from the road edge' },
+    { icon: '🗣️', title: 'Communicate Clearly', description: 'Tell driver your destination early' },
   ];
 
   return (
@@ -56,72 +56,10 @@ export default function UserDashboard({ user, onNavigate, onLogout }: UserDashbo
       <Navbar user={user} onNavigate={onNavigate} onLogout={onLogout} currentPage="user-dashboard" />
 
       <div className="flex">
-        {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-64 bg-white border-r min-h-[calc(100vh-73px)] sticky top-[73px]">
-          <nav className="p-4 space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#2E7D32] text-white">
-              <Home className="w-5 h-5" />
-              <span>Home</span>
-            </button>
-            <button onClick={() => onNavigate('routes')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-              <Map className="w-5 h-5" />
-              <span>Routes</span>
-            </button>
-            <button onClick={() => onNavigate('fares')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-              <DollarSign className="w-5 h-5" />
-              <span>Fares</span>
-            </button>
-            <button onClick={() => onNavigate('stops')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-              <MapPin className="w-5 h-5" />
-              <span>Stops</span>
-            </button>
-            <button onClick={() => onNavigate('drivers')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-              <UserIcon className="w-5 h-5" />
-              <span>Drivers</span>
-            </button>
-            <button onClick={() => onNavigate('feedback')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-              <MessageSquare className="w-5 h-5" />
-              <span>Feedback</span>
-            </button>
-          </nav>
-        </aside>
-
-        {/* Mobile Sidebar */}
-        {sidebarOpen && (
-          <aside className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)}>
-            <div className="w-64 bg-white h-full" onClick={(e) => e.stopPropagation()}>
-              <nav className="p-4 space-y-2">
-                <button onClick={() => { setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#2E7D32] text-white">
-                  <Home className="w-5 h-5" />
-                  <span>Home</span>
-                </button>
-                <button onClick={() => { onNavigate('routes'); setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                  <Map className="w-5 h-5" />
-                  <span>Routes</span>
-                </button>
-                <button onClick={() => { onNavigate('fares'); setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                  <DollarSign className="w-5 h-5" />
-                  <span>Fares</span>
-                </button>
-                <button onClick={() => { onNavigate('stops'); setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                  <MapPin className="w-5 h-5" />
-                  <span>Stops</span>
-                </button>
-                <button onClick={() => { onNavigate('drivers'); setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                  <UserIcon className="w-5 h-5" />
-                  <span>Drivers</span>
-                </button>
-                <button onClick={() => { onNavigate('feedback'); setSidebarOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 text-gray-700">
-                  <MessageSquare className="w-5 h-5" />
-                  <span>Feedback</span>
-                </button>
-              </nav>
-            </div>
-          </aside>
-        )}
+        {user && <UserSidebar onNavigate={onNavigate} currentPage="user-dashboard" />}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
           {/* Welcome Banner */}
           <div className="bg-gradient-to-r from-[#2E7D32] to-[#1B5E20] text-white rounded-lg p-6 mb-6">
             <h1 className="mb-2">Welcome, {user?.name}! 👋</h1>
@@ -137,36 +75,66 @@ export default function UserDashboard({ user, onNavigate, onLogout }: UserDashbo
               </CardHeader>
               <CardContent>
                 <InteractiveMap
-                  center={[8.2280, 124.2452]}
-                  zoom={13}
+                  center={[8.2100, 124.2280]}
+                  zoom={12}
                   height="400px"
                   routes={[
                     {
-                      name: 'Suarez to Poblacion',
+                      name: 'Suarez to City Plaza',
                       color: '#2E7D32',
                       coordinates: [
-                        [8.2280, 124.2452], // Suarez
-                        [8.2285, 124.2460], // Villa Verde
-                        [8.2290, 124.2470], // Pala-o
-                        [8.2288, 124.2480], // Poblacion
+                        [8.1915, 124.2151],   // Suarez Terminal
+                        [8.1935, 124.2165],   // Local road
+                        [8.1960, 124.2185],   // Residential area
+                        [8.1980, 124.2200],   // Villa Verde
+                        [8.2010, 124.2220],   // Heading to downtown
+                        [8.2050, 124.2245],   // Continue northeast
+                        [8.2100, 124.2270],   // Towards downtown
+                        [8.2150, 124.2300],   // Downtown approach
+                        [8.2200, 124.2330],   // Aguinaldo St approach
+                        [8.2240, 124.2355],   // Near City Hall
+                        [8.2285, 124.2371]    // Iligan City Public Plaza
                       ],
                     },
                     {
-                      name: 'Suarez to MSU-IIT',
+                      name: 'Suarez to Gaisano',
                       color: '#F9A825',
                       coordinates: [
-                        [8.2280, 124.2452], // Suarez
-                        [8.2285, 124.2460], // Villa Verde
-                        [8.2290, 124.2465], // MSU-IIT
+                        [8.1915, 124.2151],   // Suarez Terminal
+                        [8.1935, 124.2165],   // Local road
+                        [8.1960, 124.2185],   // Northeast
+                        [8.1980, 124.2200],   // Villa Verde
+                        [8.2020, 124.2240],   // Continue on main road
+                        [8.2060, 124.2280],   // Approaching Roxas
+                        [8.2100, 124.2310],   // Roxas Ave
+                        [8.2150, 124.2350],   // Along Roxas
+                        [8.2200, 124.2385],   // Approaching mall area
+                        [8.2250, 124.2400],   // Near mall
+                        [8.2308, 124.2414]    // Gaisano Super City Mall
+                      ],
+                    },
+                    {
+                      name: 'Suarez to Robinsons',
+                      color: '#1976D2',
+                      coordinates: [
+                        [8.1915, 124.2151],   // Suarez Terminal
+                        [8.1935, 124.2170],   // Local streets
+                        [8.1960, 124.2195],   // Residential
+                        [8.1980, 124.2215],   // Villa Verde area
+                        [8.2020, 124.2260],   // Heading to Macapagal
+                        [8.2060, 124.2310],   // Macapagal Ave direction
+                        [8.2100, 124.2350],   // Along Macapagal
+                        [8.2140, 124.2380],   // Approaching mall
+                        [8.2182, 124.2403]    // Robinsons Iligan
                       ],
                     },
                   ]}
                   markers={[
-                    { position: [8.2280, 124.2452], label: 'Suarez Terminal', type: 'terminal' },
-                    { position: [8.2285, 124.2460], label: 'Villa Verde Junction', type: 'stop' },
-                    { position: [8.2288, 124.2480], label: 'Poblacion', type: 'terminal' },
-                    { position: [8.2290, 124.2465], label: 'MSU-IIT', type: 'terminal' },
-                    { position: [8.2283, 124.2455], label: 'Mahayahay Center', type: 'stop' },
+                    { position: [8.1915, 124.2151], label: 'Suarez Terminal', type: 'terminal' },
+                    { position: [8.1980, 124.2200], label: 'Villa Verde Junction', type: 'stop' },
+                    { position: [8.2285, 124.2371], label: 'City Plaza', type: 'terminal' },
+                    { position: [8.2308, 124.2414], label: 'Gaisano Mall', type: 'terminal' },
+                    { position: [8.2182, 124.2403], label: 'Robinsons Mall', type: 'terminal' },
                   ]}
                 />
               </CardContent>
@@ -222,6 +190,41 @@ export default function UserDashboard({ user, onNavigate, onLogout }: UserDashbo
                 )}
               </CardContent>
             </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="mb-6">
+            <h2 className="mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('routes')}>
+                <CardContent className="p-6 text-center">
+                  <Map className="w-8 h-8 mx-auto mb-3 text-[#2E7D32]" />
+                  <h3 className="mb-1 text-sm">Browse Routes</h3>
+                  <p className="text-xs text-gray-600">View all available jeepney routes</p>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('stops')}>
+                <CardContent className="p-6 text-center">
+                  <MapPin className="w-8 h-8 mx-auto mb-3 text-[#2E7D32]" />
+                  <h3 className="mb-1 text-sm">Find Stops</h3>
+                  <p className="text-xs text-gray-600">Locate jeepney stops near you</p>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('driver-feedback')}>
+                <CardContent className="p-6 text-center">
+                  <span className="text-3xl mb-3 block">⭐</span>
+                  <h3 className="mb-1 text-sm">Rate Driver</h3>
+                  <p className="text-xs text-gray-600">Share your driver experience</p>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('feedback')}>
+                <CardContent className="p-6 text-center">
+                  <MessageSquare className="w-8 h-8 mx-auto mb-3 text-[#2E7D32]" />
+                  <h3 className="mb-1 text-sm">Give Feedback</h3>
+                  <p className="text-xs text-gray-600">Help us improve our service</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           {/* Safety Tips */}
@@ -281,36 +284,6 @@ export default function UserDashboard({ user, onNavigate, onLogout }: UserDashbo
           </Card>
         </main>
       </div>
-
-      {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50">
-        <div className="grid grid-cols-6 gap-1 p-2">
-          <button onClick={() => onNavigate('user-dashboard')} className="flex flex-col items-center gap-1 py-2 text-[#2E7D32]">
-            <Home className="w-5 h-5" />
-            <span className="text-xs">Home</span>
-          </button>
-          <button onClick={() => onNavigate('routes')} className="flex flex-col items-center gap-1 py-2 text-gray-600">
-            <Map className="w-5 h-5" />
-            <span className="text-xs">Map</span>
-          </button>
-          <button onClick={() => onNavigate('fares')} className="flex flex-col items-center gap-1 py-2 text-gray-600">
-            <DollarSign className="w-5 h-5" />
-            <span className="text-xs">Fare</span>
-          </button>
-          <button onClick={() => onNavigate('stops')} className="flex flex-col items-center gap-1 py-2 text-gray-600">
-            <MapPin className="w-5 h-5" />
-            <span className="text-xs">Stops</span>
-          </button>
-          <button onClick={() => onNavigate('drivers')} className="flex flex-col items-center gap-1 py-2 text-gray-600">
-            <UserIcon className="w-5 h-5" />
-            <span className="text-xs">Drivers</span>
-          </button>
-          <button onClick={() => onNavigate('feedback')} className="flex flex-col items-center gap-1 py-2 text-gray-600">
-            <MessageSquare className="w-5 h-5" />
-            <span className="text-xs">Feedback</span>
-          </button>
-        </div>
-      </nav>
     </div>
   );
 }

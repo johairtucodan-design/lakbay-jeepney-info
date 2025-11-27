@@ -19,7 +19,7 @@ export default function Navbar({ user, onNavigate, onLogout, currentPage }: Navb
         { id: 'routes', name: 'Routes', page: 'routes' },
         { id: 'fares', name: 'Fares', page: 'fares' },
         { id: 'stops', name: 'Stops', page: 'stops' },
-        { id: 'drivers', name: 'Drivers', page: 'drivers' },
+        ...(user.role === 'admin' ? [{ id: 'drivers', name: 'Drivers', page: 'drivers' }] : []),
         { id: 'feedback', name: 'Feedback', page: 'feedback' },
       ]
     : [
@@ -27,7 +27,6 @@ export default function Navbar({ user, onNavigate, onLogout, currentPage }: Navb
         { id: 'routes', name: 'Routes', page: 'routes' },
         { id: 'fares', name: 'Fares', page: 'fares' },
         { id: 'stops', name: 'Stops', page: 'stops' },
-        { id: 'drivers', name: 'Drivers', page: 'drivers' },
       ];
 
   return (

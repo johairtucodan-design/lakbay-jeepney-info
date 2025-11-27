@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Textarea } from './ui/textarea';
 import Navbar from './Navbar';
-import { Menu, X, LayoutDashboard, Users, Car, Map, DollarSign, MessageSquare, TrendingUp, AlertCircle, Plus, Edit, Trash2 } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Users, Car, Map, DollarSign, MessageSquare, TrendingUp, AlertCircle, Plus, Edit, Trash2, MapPin, Bell, Send } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
 interface AdminDashboardProps {
@@ -21,6 +22,13 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isAddRouteOpen, setIsAddRouteOpen] = useState(false);
+  const [isAddStopOpen, setIsAddStopOpen] = useState(false);
+  const [isUpdateFareOpen, setIsUpdateFareOpen] = useState(false);
+  const [isSendNotificationOpen, setIsSendNotificationOpen] = useState(false);
+  const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<typeof users[0] | null>(null);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isAddDriverOpen, setIsAddDriverOpen] = useState(false);
 
   const stats = {
     totalUsers: 1248,
@@ -55,10 +63,42 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
     { id: 3, user: 'Juan C.', rating: 3, comment: 'Route needs more stops', date: 'Nov 1, 2025', status: 'Pending' },
   ];
 
+  const stops = [
+    { id: 1, name: 'Suarez Terminal', location: 'Suarez, Iligan City', route: 'Suarez to Poblacion', coordinates: '8.1914, 124.2151', status: 'Active' },
+    { id: 2, name: 'Villa Verde Subdivision', location: 'Villa Verde, Suarez', route: 'Suarez to Poblacion', coordinates: '8.1968, 124.2133', status: 'Active' },
+    { id: 3, name: 'National Highway Junction', location: 'National Highway', route: 'Suarez to Poblacion', coordinates: '8.1974, 124.2113', status: 'Active' },
+    { id: 4, name: 'City Hall Area', location: 'Downtown Core', route: 'Suarez to Poblacion', coordinates: '8.2260, 124.2400', status: 'Active' },
+    { id: 5, name: 'Public Plaza Area', location: 'City Center', route: 'Suarez to Poblacion', coordinates: '8.2295, 124.2406', status: 'Active' },
+  ];
+
   const handleAddRoute = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success('Route added successfully!');
     setIsAddRouteOpen(false);
+  };
+
+  const handleAddStop = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Stop added successfully!');
+    setIsAddStopOpen(false);
+  };
+
+  const handleUpdateFare = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Fare rates updated successfully!');
+    setIsUpdateFareOpen(false);
+  };
+
+  const handleSendNotification = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Notification sent successfully to drivers!');
+    setIsSendNotificationOpen(false);
+  };
+
+  const handleEditUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('User updated successfully!');
+    setIsEditUserOpen(false);
   };
 
   const renderContent = () => {
@@ -197,10 +237,58 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1>Manage Users</h1>
-              <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
-                <Plus className="w-4 h-4 mr-2" />
-                Add User
-              </Button>
+              <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add User
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New User</DialogTitle>
+                    <DialogDescription>Create a new user account in the system</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleEditUser} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Name</Label>
+                      <Input placeholder="e.g., Maria Santos" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input placeholder="e.g., maria@example.com" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Role</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Status</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Add User
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
             <Card>
               <CardHeader>
@@ -244,9 +332,57 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="ghost">
-                              <Edit className="w-4 h-4" />
-                            </Button>
+                            <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="ghost">
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit User</DialogTitle>
+                                  <DialogDescription>Update user details</DialogDescription>
+                                </DialogHeader>
+                                <form onSubmit={handleEditUser} className="space-y-4">
+                                  <div className="space-y-2">
+                                    <Label>Name</Label>
+                                    <Input placeholder="e.g., Maria Santos" required />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Email</Label>
+                                    <Input placeholder="e.g., maria@example.com" required />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Role</Label>
+                                    <Select>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select role" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="user">User</SelectItem>
+                                        <SelectItem value="admin">Admin</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Status</Label>
+                                    <Select>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="active">Active</SelectItem>
+                                        <SelectItem value="inactive">Inactive</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Update User
+                                  </Button>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
                             <Button size="sm" variant="ghost">
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -264,12 +400,127 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
       case 'drivers':
         return (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-3">
               <h1>Manage Drivers</h1>
-              <Button className="bg-[#F9A825] hover:bg-[#F57F17]">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Driver
-              </Button>
+              <div className="flex gap-2">
+                <Dialog open={isSendNotificationOpen} onOpenChange={setIsSendNotificationOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
+                      <Bell className="w-4 h-4 mr-2" />
+                      Send Notification
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Send Notification to Drivers</DialogTitle>
+                      <DialogDescription>Send an important message or announcement to drivers</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSendNotification} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Recipients</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select recipients" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Drivers</SelectItem>
+                            <SelectItem value="suarez-poblacion">Suarez to Poblacion Route</SelectItem>
+                            <SelectItem value="suarez-tubod">Suarez to Tubod Route</SelectItem>
+                            <SelectItem value="suarez-msu">Suarez to MSU-IIT Route</SelectItem>
+                            <SelectItem value="active">Active Drivers Only</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Notification Title</Label>
+                        <Input placeholder="e.g., Important Route Update" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Message</Label>
+                        <Textarea 
+                          placeholder="Enter your message here..."
+                          className="min-h-[120px]"
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Priority</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="normal">Normal</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Notification
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+                <Dialog open={isAddDriverOpen} onOpenChange={setIsAddDriverOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-[#F9A825] hover:bg-[#F57F17]">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Driver
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add New Driver</DialogTitle>
+                      <DialogDescription>Create a new driver account in the system</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleEditUser} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Name</Label>
+                        <Input placeholder="e.g., Maria Santos" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Input placeholder="e.g., maria@example.com" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Plate Number</Label>
+                        <Input placeholder="e.g., ABC 1234" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Route Assignment</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select route" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="suarez-poblacion">Suarez to Poblacion</SelectItem>
+                            <SelectItem value="suarez-tubod">Suarez to Tubod</SelectItem>
+                            <SelectItem value="suarez-msu">Suarez to MSU-IIT</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Status</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Add Driver
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
             <Card>
               <CardHeader>
@@ -419,14 +670,156 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
           </div>
         );
 
+      case 'stops':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1>Manage Stops</h1>
+              <Dialog open={isAddStopOpen} onOpenChange={setIsAddStopOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Stop
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Stop</DialogTitle>
+                    <DialogDescription>Create a new stop location in the system</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleAddStop} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Stop Name</Label>
+                      <Input placeholder="e.g., Suarez Terminal" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Location</Label>
+                      <Input placeholder="e.g., Suarez, Iligan City" required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Route Assignment</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select route" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="suarez-poblacion">Suarez to Poblacion</SelectItem>
+                          <SelectItem value="suarez-tubod">Suarez to Tubod</SelectItem>
+                          <SelectItem value="suarez-msu">Suarez to MSU-IIT</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Coordinates (Lat, Long)</Label>
+                      <Input placeholder="e.g., 8.1914, 124.2151" required />
+                    </div>
+                    <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                      Add Stop
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <Input placeholder="Search stops..." className="max-w-sm" />
+                  <Select>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Route" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Routes</SelectItem>
+                      <SelectItem value="suarez-poblacion">Suarez to Poblacion</SelectItem>
+                      <SelectItem value="suarez-tubod">Suarez to Tubod</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Stop Name</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Route</TableHead>
+                      <TableHead>Coordinates</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {stops.map((stop) => (
+                      <TableRow key={stop.id}>
+                        <TableCell>{stop.name}</TableCell>
+                        <TableCell>{stop.location}</TableCell>
+                        <TableCell>{stop.route}</TableCell>
+                        <TableCell className="text-sm text-gray-600">{stop.coordinates}</TableCell>
+                        <TableCell>
+                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                            {stop.status}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="ghost">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
       case 'fares':
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1>Manage Fares</h1>
-              <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
-                Update Fare Rates
-              </Button>
+              <Dialog open={isUpdateFareOpen} onOpenChange={setIsUpdateFareOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-[#2E7D32] hover:bg-[#1B5E20]">
+                    Update Fare Rates
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Update Fare Rates</DialogTitle>
+                    <DialogDescription>Update the fare rates for all routes</DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdateFare} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Distance Range</Label>
+                      <Input placeholder="0-5 km" required />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Base Fare</Label>
+                        <Input placeholder="₱10" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Per Kilometer</Label>
+                        <Input placeholder="₱2" required />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Maximum Fare</Label>
+                      <Input placeholder="₱15" required />
+                    </div>
+                    <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
+                      Update Fares
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
             <Card>
               <CardHeader>
@@ -457,9 +850,14 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                         <TableCell>₱2</TableCell>
                         <TableCell>₱15</TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -468,9 +866,14 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                         <TableCell>₱2</TableCell>
                         <TableCell>₱25</TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -479,9 +882,14 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                         <TableCell>₱3</TableCell>
                         <TableCell>₱40</TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="ghost">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -535,10 +943,11 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                         </div>
                       </div>
                       <p className="text-sm text-gray-700 mb-3">{fb.comment}</p>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">Mark as Reviewed</Button>
-                        <Button size="sm" variant="outline">Contact User</Button>
-                      </div>
+                      {fb.status === 'Pending' && (
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">Mark as Reviewed</Button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -595,6 +1004,15 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
             >
               <Map className="w-5 h-5" />
               <span>Manage Routes</span>
+            </button>
+            <button
+              onClick={() => setActiveSection('stops')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                activeSection === 'stops' ? 'bg-[#2E7D32] text-white' : 'hover:bg-gray-100 text-gray-700'
+              }`}
+            >
+              <MapPin className="w-5 h-5" />
+              <span>Manage Stops</span>
             </button>
             <button
               onClick={() => setActiveSection('fares')}
@@ -657,6 +1075,15 @@ export default function AdminDashboard({ user, onNavigate, onLogout }: AdminDash
                 >
                   <Map className="w-5 h-5" />
                   <span>Manage Routes</span>
+                </button>
+                <button
+                  onClick={() => { setActiveSection('stops'); setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
+                    activeSection === 'stops' ? 'bg-[#2E7D32] text-white' : 'hover:bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  <MapPin className="w-5 h-5" />
+                  <span>Manage Stops</span>
                 </button>
                 <button
                   onClick={() => { setActiveSection('fares'); setSidebarOpen(false); }}

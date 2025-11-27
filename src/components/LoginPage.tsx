@@ -16,28 +16,34 @@ export default function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
-  const determineRole = (email: string): 'user' | 'driver' | 'admin' => {
-    // Determine role based on email
-    if (email.includes('admin')) {
-      return 'admin';
-    } else if (email.includes('driver')) {
-      return 'driver';
-    }
-    return 'user';
-  };
+  // Valid credentials
+  const validCredentials = [
+    { email: 'user@lakbay.ph', password: 'user123', role: 'user' as const, name: 'User' },
+    { email: 'driver@lakbay.ph', password: 'driver123', role: 'driver' as const, name: 'Driver' },
+    { email: 'admin@lakbay.ph', password: 'admin123', role: 'admin' as const, name: 'Admin' }
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - in real app, this would validate credentials
-    if (email && password) {
-      const role = determineRole(email);
-      const userName = name || email.split('@')[0];
+    setError('');
+    
+    // Validate credentials against the valid list
+    const validUser = validCredentials.find(
+      cred => cred.email === email && cred.password === password
+    );
+
+    if (validUser) {
+      // Login successful
       onLogin({
-        name: userName,
-        email: email,
-        role: role
+        name: validUser.name,
+        email: validUser.email,
+        role: validUser.role
       });
+    } else {
+      // Invalid credentials
+      setError('Invalid email or password. Please check your credentials and try again.');
     }
   };
 
@@ -64,33 +70,6 @@ export default function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Sample Credentials Banner */}
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm mb-2">
-                <strong className="text-blue-900">Sample Credentials for Testing:</strong>
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                <div className="p-2 bg-white rounded border border-blue-100">
-                  <p className="text-blue-900 mb-1"><strong>User/Commuter:</strong></p>
-                  <p className="text-gray-600">Email: user@lakbay.ph</p>
-                  <p className="text-gray-600">Password: user123</p>
-                </div>
-                <div className="p-2 bg-white rounded border border-blue-100">
-                  <p className="text-blue-900 mb-1"><strong>Driver:</strong></p>
-                  <p className="text-gray-600">Email: driver@lakbay.ph</p>
-                  <p className="text-gray-600">Password: driver123</p>
-                </div>
-                <div className="p-2 bg-white rounded border border-blue-100">
-                  <p className="text-blue-900 mb-1"><strong>Admin:</strong></p>
-                  <p className="text-gray-600">Email: admin@lakbay.ph</p>
-                  <p className="text-gray-600">Password: admin123</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-600 mt-3 text-center">
-                Your dashboard will be automatically determined based on your account type.
-              </p>
-            </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
               {isRegistering && (
                 <div className="space-y-2">
@@ -133,6 +112,14 @@ export default function LoginPage({ onLogin, onNavigate }: LoginPageProps) {
                   </button>
                 </div>
               )}
+              
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center">
+                  {error}
+                </div>
+              )}
+              
               <Button type="submit" className="w-full bg-[#2E7D32] hover:bg-[#1B5E20]">
                 {isRegistering ? 'Register' : 'Sign In'}
               </Button>

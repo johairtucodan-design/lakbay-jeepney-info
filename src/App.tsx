@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import UserDashboard from './components/UserDashboard';
@@ -8,7 +8,10 @@ import RoutesPage from './components/RoutesPage';
 import FaresPage from './components/FaresPage';
 import StopsPage from './components/StopsPage';
 import DriversPage from './components/DriversPage';
+import DriverQRScanner from './components/DriverQRScanner';
 import FeedbackPage from './components/FeedbackPage';
+import DriverFeedbackPage from './components/DriverFeedbackPage';
+import UserSettings from './components/UserSettings';
 import { Toaster } from './components/ui/sonner';
 
 export type UserRole = 'user' | 'driver' | 'admin' | null;
@@ -20,8 +23,27 @@ export interface User {
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('landing');
-  const [user, setUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Initialize from localStorage if available
+    const savedPage = localStorage.getItem('lakbay_currentPage');
+    return savedPage || 'landing';
+  });
+  const [user, setUser] = useState<User | null>(() => {
+    // Initialize from localStorage if available
+    const savedUser = localStorage.getItem('lakbay_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Save to localStorage whenever user or page changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('lakbay_user', JSON.stringify(user));
+      localStorage.setItem('lakbay_currentPage', currentPage);
+    } else {
+      localStorage.removeItem('lakbay_user');
+      localStorage.removeItem('lakbay_currentPage');
+    }
+  }, [user, currentPage]);
 
   const handleLogin = (userData: User) => {
     setUser(userData);
@@ -37,6 +59,8 @@ export default function App() {
   const handleLogout = () => {
     setUser(null);
     setCurrentPage('landing');
+    localStorage.removeItem('lakbay_user');
+    localStorage.removeItem('lakbay_currentPage');
   };
 
   const handleNavigate = (page: string) => {
@@ -62,9 +86,20 @@ export default function App() {
       case 'stops':
         return <StopsPage user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
       case 'drivers':
-        return <DriversPage user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
+        // Only admins can access the drivers page
+        if (user?.role === 'admin') {
+          return <DriversPage user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
+        }
+        // Redirect users to dashboard
+        return <UserDashboard user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
+      case 'driver-qr-scanner':
+        return <DriverQRScanner user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
       case 'feedback':
         return <FeedbackPage user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
+      case 'driver-feedback':
+        return <DriverFeedbackPage user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
+      case 'user-settings':
+        return <UserSettings user={user} onNavigate={handleNavigate} onLogout={handleLogout} />;
       default:
         return <LandingPage onNavigate={handleNavigate} />;
     }

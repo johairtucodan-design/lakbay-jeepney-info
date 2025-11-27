@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, MapPin, Star, Phone, Mail, Calendar, Award, TrendingUp } from 'lucide-react';
+import { User, MapPin, Star, Phone, Mail, Calendar, Award, TrendingUp, QrCode } from 'lucide-react';
 import Navbar from './Navbar';
 import UserSidebar from './UserSidebar';
 import { User as UserType } from '../App';
@@ -249,9 +249,20 @@ export default function DriversPage({ user = null, onNavigate = () => {}, onLogo
                   </div>
                 </div>
 
+                {/* QR Code */}
+                <div className="bg-gray-50 border-2 border-dashed border-[#2E7D32] rounded-lg p-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <QrCode className="w-10 h-10 text-[#2E7D32]" />
+                    <div className="flex-1">
+                      <div className="text-xs text-gray-600 mb-1">Driver QR Code</div>
+                      <div className="text-sm text-[#2E7D32] font-mono">DRIVER-{driver.id}</div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* View Details Button */}
                 <button
-                  className="w-full mt-4 bg-gradient-to-r from-[#2E7D32] to-[#1B5E20] text-white py-2 rounded-lg hover:shadow-lg transition-shadow"
+                  className="w-full bg-gradient-to-r from-[#2E7D32] to-[#1B5E20] text-white py-2 rounded-lg hover:shadow-lg transition-shadow"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedDriver(driver);
@@ -335,13 +346,35 @@ export default function DriversPage({ user = null, onNavigate = () => {}, onLogo
                 </div>
 
                 {/* Additional Info */}
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
                   <h3 className="text-gray-900 mb-3">Driver Information</h3>
                   <div className="space-y-2 text-sm text-gray-700">
                     <p><strong>Professional License:</strong> {selectedDriver.licenseNumber}</p>
                     <p><strong>Vehicle:</strong> {selectedDriver.vehiclePlateNumber}</p>
                     <p><strong>Service Record:</strong> {selectedDriver.totalTrips.toLocaleString()} trips completed</p>
                     <p><strong>Rating:</strong> {selectedDriver.rating} out of 5.0 stars</p>
+                  </div>
+                </div>
+
+                {/* QR Code Section */}
+                <div className="bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] p-6 rounded-lg">
+                  <div className="flex items-center gap-4 mb-4">
+                    <QrCode className="w-12 h-12 text-white" />
+                    <div>
+                      <h3 className="text-white mb-1">Driver QR Code</h3>
+                      <p className="text-green-100 text-sm">Scan this code on the vehicle</p>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg">
+                    <div className="flex items-center justify-center">
+                      <div className="bg-gray-100 p-6 rounded-lg border-4 border-[#2E7D32]">
+                        <QrCode className="w-24 h-24 text-[#2E7D32]" />
+                      </div>
+                    </div>
+                    <div className="text-center mt-4">
+                      <p className="text-sm text-gray-600 mb-2">QR Code ID</p>
+                      <p className="text-xl text-[#2E7D32] font-mono">DRIVER-{selectedDriver.id}</p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { Home, Map, DollarSign, MapPin, MessageSquare, User } from 'lucide-react';
+import { Home, Map, DollarSign, MapPin, MessageSquare, Star, Settings } from 'lucide-react';
 
 interface UserSidebarProps {
   onNavigate: (page: string) => void;
@@ -11,8 +11,9 @@ export default function UserSidebar({ onNavigate, currentPage }: UserSidebarProp
     { id: 'routes', label: 'Routes', icon: Map },
     { id: 'fares', label: 'Fares', icon: DollarSign },
     { id: 'stops', label: 'Stops', icon: MapPin },
-    { id: 'drivers', label: 'Drivers', icon: User },
+    { id: 'driver-feedback', label: 'Driver Reviews', icon: Star },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+    { id: 'user-settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -43,10 +44,17 @@ export default function UserSidebar({ onNavigate, currentPage }: UserSidebarProp
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50">
-        <div className="grid grid-cols-6 gap-1 p-2">
+        <div className="grid grid-cols-7 gap-1 p-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
+            const mobileLabel = 
+              item.label === 'Routes' ? 'Map' : 
+              item.label === 'Fares' ? 'Fare' : 
+              item.label === 'Driver Reviews' ? 'Drivers' :
+              item.label === 'Feedback' ? 'Help' :
+              item.label === 'Settings' ? 'Profile' :
+              item.label;
             return (
               <button
                 key={item.id}
@@ -56,7 +64,7 @@ export default function UserSidebar({ onNavigate, currentPage }: UserSidebarProp
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs">{item.label === 'Routes' ? 'Map' : item.label === 'Fares' ? 'Fare' : item.label}</span>
+                <span className="text-xs">{mobileLabel}</span>
               </button>
             );
           })}
